@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เว็บไซต์แทงกีฬา</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            position: relative;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .tab:hover {
+            background-color: #999;
+        }
+
+        .active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .bet-form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .bet-form label {
+            margin-right: 10px;
+        }
+
+        .bet-form input[type="number"],
+        .bet-form select {
+            padding: 8px;
+            width: 100px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .color-options {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .color-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+
+        .selected-color-box {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .wallet {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .wallet input {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+        }
+
+        .scoreboard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 200px;
+        }
+
+        .scoreboard h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .scoreboard p {
+            font-size: 16px;
+        }
+
+        .not-started {
+            font-size: 16px;
+            color: red;
+            text-align: center;
+        }
+
+        .players-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+
+        .players-table th, .players-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .players-table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .players-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 250px;
+        }
+
+    </style>
+</head>
+<body>
+
+    
+<header>
+    <h1>เว็บไซต์แทงกีฬา</h1>
+</header>
+
+<div class="container">
+    <!-- Tab Navigation -->
+    <div class="tabs">
+        <div class="tab active" id="basketball-tab" onclick="switchTab('basketball')">บาสเกตบอล</div>
+        <div class="tab" id="football-tab" onclick="switchTab('football')">ฟุตบอล</div>
+        <div class="tab" id="deposit-tab" onclick="switchTab('deposit')">เติมเงิน</div>
+    </div>
+
+    <!-- หน้าเดิมพันบาสเกตบอล -->
+    <div id="basketball" class="bet-section">
+        <h2>เดิมพันบาสเกตบอล</h2>
+        <div class="color-options">
+            <div class="color-option red" onclick="selectColor('red')"></div>
+            <div class="color-option green" onclick="selectColor('green')"></div>
+            <div class="color-option yellow" onclick="selectColor('yellow')"></div>
+            <div class="color-option blue" onclick="selectColor('blue')"></div>
+        </div>
+        <div class="bet-form">
+            <label for="basketball-amount">จำนวนเงิน:</label>
+            <input type="number" id="basketball-amount" placeholder="เดิมพัน (บาท)" />
+            <label for="basketball-odds">ราคาต่อรอง:</label>
+            <select id="basketball-odds">
+                <option value="1.1">1.1</option>
+            </select>
+            <button onclick="placeBasketballBet()">วางเดิมพัน</button>
+        </div>
+        <div class="result" id="basketball-result"></div>
+    </div>
+
+    <!-- หน้าเดิมพันฟุตบอล -->
+    <div id="football" class="bet-section" style="display: none;">
+        <h2>เดิมพันฟุตบอล</h2>
+        <div class="color-options">
+            <div class="color-option red" onclick="selectColor('red')"></div>
+            <div class="color-option green" onclick="selectColor('green')"></div>
+            <div class="color-option yellow" onclick="selectColor('yellow')"></div>
+            <div class="color-option blue" onclick="selectColor('blue')"></div>
+        </div>
+        <div class="bet-form">
+            <label for="football-amount">จำนวนเงิน:</label>
+            <input type="number" id="football-amount" placeholder="เดิมพัน (บาท)" />
+            <label for="football-odds">ราคาต่อรอง:</label>
+            <select id="football-odds">
+                <option value="1.1">1.1</option>
+            </select>
+            <button onclick="placeFootballBet()">วางเดิมพัน</button>
+        </div>
+        <div class="result" id="football-result"></div>
+    </div>
+
+    <!-- หน้าเติมเงิน -->
+    <div id="deposit" class="bet-section" style="display: none;">
+        <h2>เติมเงิน</h2>
+        <div class="deposit-method">
+            <label for="payment-method">เลือกช่องทางการเติมเงิน:</label>
+            <select id="payment-method">
+                <option value="truemoney">TrueMoney</option>
+                <option value="kbank">KBank</option>
+            </select>
+        </div>
+        <div class="wallet">
+            <label for="deposit-amount">จำนวนเงินที่เติม:</label>
+            <input type="number" id="deposit-amount" placeholder="ยอดเงิน" />
+            <button onclick="depositMoney()">เติมเงิน</button>
+        </div>
+        <div class="balance" id="balance">ยอดเงิน: 0 บาท</div>
+    </div>
+
+    <div class="selected-color-box" id="selected-color-box">คุณยังไม่ได้เลือกสี</div>
+</div>
+
+<div class="scoreboard" id="basketball-scoreboard">
+    <h3>บาสเกตบอล</h3>
+    <p id="basketball-score">ทีม A 0 - 0 ทีม B</p>
+    <p class="not-started">ยังไม่เริ่มการแข่งขัน</p>
+</div>
+
+<div class="scoreboard" id="football-scoreboard" style="display: none;">
+    <h3>ฟุตบอล</h3>
+    <p id="football-score">ทีม A 0 - 0 ทีม B</p>
+    <p class="not-started">ยังไม่เริ่มการแข่งขัน</p>
+</div>
+
+<div class="players-info" id="players-info">
+    <table class="players-table" id="players-table">
+        <thead>
+            <tr>
+                <th>ชื่อผู้เล่น</th>
+                <th>จำนวนเงินที่เดิมพัน</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    let players = [];
+    let balance = 0;
+    let selectedColor = '';
+
+    // เปลี่ยนแท็บที่แสดง
+    function switchTab(sport) {
+        const basketballTab = document.getElementById("basketball-tab");
+        const footballTab = document.getElementById("football-tab");
+        const depositTab = document.getElementById("deposit-tab");
+
+        const basketballSection = document.getElementById("basketball");
+        const footballSection = document.getElementById("football");
+        const depositSection = document.getElementById("deposit");
+
+        const basketballScoreboard = document.getElementById("basketball-scoreboard");
+        const footballScoreboard = document.getElementById("football-scoreboard");
+
+        if (sport === "basketball") {
+            basketballTab.classList.add("active");
+            footballTab.classList.remove("active");
+            depositTab.classList.remove("active");
+            basketballSection.style.display = "block";
+            footballSection.style.display = "none";
+            depositSection.style.display = "none";
+            basketballScoreboard.style.display = "block";
+            footballScoreboard.style.display = "none";
+        } else if (sport === "football") {
+            footballTab.classList.add("active");
+            basketballTab.classList.remove("active");
+            depositTab.classList.remove("active");
+            basketballSection.style.display = "none";
+            footballSection.style.display = "block";
+            depositSection.style.display = "none";
+            basketballScoreboard.style.display = "none";
+            footballScoreboard.style.display = "block";
+        } else {
+            depositTab.classList.add("active");
+            basketballTab.classList.remove("active");
+            footballTab.classList.remove("active");
+            basketballSection.style.display = "none";
+            footballSection.style.display = "none";
+            depositSection.style.display = "block";
+            basketballScoreboard.style.display = "none";
+            footballScoreboard.style.display = "none";
+        }
+    }
+
+    // เลือกสีเดิมพัน
+    function selectColor(color) {
+        selectedColor = color;
+        document.getElementById("selected-color-box").innerText = `คุณเลือกเดิมพันด้วยสี: ${color}`;
+    }
+
+    // การคำนวณผลตอบแทนจากการเดิมพันบาสเกตบอล
+    function placeBasketballBet() {
+        const amount = document.getElementById("basketball-amount").value;
+        const odds = document.getElementById("basketball-odds").value;
+
+        if (!amount || amount <= 0) {
+            alert("กรุณากรอกจำนวนเงินที่ต้องการวางเดิมพัน!");
+            return;
+        }
+
+        const playerName = prompt("กรุณากรอกชื่อของคุณ: ");
+        players.push({ name: playerName, amount: amount });
+        displayPlayers();
+
+        const payout = (amount * odds).toFixed(2);
+        document.getElementById("basketball-result").innerHTML = `คุณเดิมพันบาสเกตบอล จำนวนเงิน ${amount} บาท โดยราคาต่อรอง ${odds}. ผลตอบแทนที่คาดว่าจะได้รับ: ${payout} บาท`;
+    }
+
+    // การคำนวณผลตอบแทนจากการเดิมพันฟุตบอล
+    function placeFootballBet() {
+        const amount = document.getElementById("football-amount").value;
+        const odds = document.getElementById("football-odds").value;
+
+        if (!amount || amount <= 0) {
+            alert("กรุณากรอกจำนวนเงินที่ต้องการวางเดิมพัน!");
+            return;
+        }
+
+        const playerName = prompt("กรุณากรอกชื่อของคุณ: ");
+        players.push({ name: playerName, amount: amount });
+        displayPlayers();
+
+        const payout = (amount * odds).toFixed(2);
+        document.getElementById("football-result").innerHTML = `คุณเดิมพันฟุตบอล จำนวนเงิน ${amount} บาท โดยราคาต่อรอง ${odds}. ผลตอบแทนที่คาดว่าจะได้รับ: ${payout} บาท`;
+    }
+
+    // แสดงรายชื่อผู้เล่นในตาราง
+    function displayPlayers() {
+        const playersTable = document.getElementById("players-table").getElementsByTagName("tbody")[0];
+        playersTable.innerHTML = "";
+
+        players.forEach(player => {
+            const row = document.createElement("tr");
+            const nameCell = document.createElement("td");
+            const amountCell = document.createElement("td");
+
+            nameCell.textContent = player.name;
+            amountCell.textContent = `${player.amount} บาท`;
+
+            row.appendChild(nameCell);
+            row.appendChild(amountCell);
+            playersTable.appendChild(row);
+        });
+    }
+
+    // เติมเงิน
+    function depositMoney() {
+        const amount = document.getElementById("deposit-amount").value;
+
+        if (!amount || amount <= 0) {
+            alert("กรุณากรอกจำนวนเงินที่ต้องการเติม!");
+            return;
+        }
+
+        balance += parseFloat(amount);
+        document.getElementById("balance").innerText = `ยอดเงิน: ${balance.toFixed(2)} บาท`;
+    }
+</script>
+
+</body>
+</html>
